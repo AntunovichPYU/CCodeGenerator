@@ -5,13 +5,13 @@ library string
 	language "C"
 	url "";
 
-import actions.lsl;
-import semantic.lsl;
-import definitions.lsl
-import stdlib.lsl;
+import "std/utils/semantic";
+import "std/utils/definitions";
+import "std/utils/actions";
+import "std/stdlib";
 
-include <string.h>;
-include <stdlib.h>;
+include "<string.h>";
+include "<stdlib.h>";
 
 
 	
@@ -30,7 +30,7 @@ automaton STRING: int
 	 
 	proc __strlen(s: *char): size_t 
 	{
-		result = action STRLEN(s);
+		result = action STR_LEN(s);
 	}
 	
 	proc __strncmp(@const s1: *char, @const s2: *char, n: size_t): int
@@ -43,26 +43,23 @@ automaton STRING: int
 	/* copies a string from `s1` to `s2`
 	 */
 	fun strcpy(@restrict s1: *char, @const @restrict s2: *char): *char
-	//requires sizeof(s2) >= 0;
-	//requires sizeof(s1) >= sizeof(s2);
-	requires s1 != NULL;
-	requires s2 != NULL;
-	ensures s1 == s2;
 	{
+		requires s1 != null;
+        requires s2 != null;
+        ensures s1 == s2;
+
 		val s2_len: size_t = __strlen(s2);
-		result = __strncpy(s1, s2, s1_len);
+		result = __strncpy(s1, s2, s2_len);
 	}
 	
 	
 	/* copies first `n` characters of a string from `s1` to `s2`
 	 */
 	fun strncpy(@restrict s1: *char, @const @restrict s2: *char, n: size_t): *char
-	//requires sizeof(s1) >= n + 1;
-	//requires sizeof(s2) >= 0;
-	requires s1 != NULL;
-	requires s2 != NULL;
-	//ensures strlen(s1) = n;
 	{
+		requires s1 != null;
+        requires s2 != null;
+
 		result = __strncpy(s1, s2, n);
 	}
 	
@@ -70,10 +67,8 @@ automaton STRING: int
 	/* appends a copy of `s2` to the end of `s1`
 	 */
 	fun strcat(@restrict s1: char, @const @restrict s2: *char): *char
-	//requires sizeof(s1) >= strlen(s1) + strlen(s2);
-	//ensures strlen(s1) = strlen(s1') + strlen(s2);
 	{
-		val s2_len = __strlen(s2);
+		val s2_len: size_t = __strlen(s2);
 		result = action CONCAT(s1, s2, s2_len);
 	}
 	
@@ -81,11 +76,10 @@ automaton STRING: int
 	/* appends first `n` characters of `s2` to the end of `s1`
 	 */
 	fun strncat(@restrict s1: *char, @const @restrict s2: *char, n: size_t): *char
-	//requires sizeof(s1) >= strlen(s1) + n;
-	requires s1 != NULL;
-	requires s2 != NULL;
-	//ensures strlen(s1) = strlen(s1') + n;
 	{
+		requires s1 != null;
+        requires s2 != null;
+
 		result = __strncat(s1, s2, n);
 	}
 	
@@ -97,8 +91,6 @@ automaton STRING: int
 	 * the same two original strings
 	 */
 	fun strxfrm(@restrict s1: *char, @const @restrict s2: *char, n: size_t): size_t
-	//requires sizeof(s1) >= n;
-	//ensures strlen(s1) = n + 1;
 	{
 		if (n == 0) {
 			result = __strlen(s2);
@@ -112,14 +104,15 @@ automaton STRING: int
 	 * to `malloc`
 	 */
 	fun strdup(@const s: *char): *char
-	ensures result = s;
 	{
-		var siz: size_t = __strlen(s) + 1;
-		var copy: *char = __malloc(siz);
+		ensures result == s;
+
+		var siz: size_t = __strlen(s);
+		var copy: *char = __malloc(siz + 1);
 		if (copy == null) {
 			result = null;
 		} else {
-			__memcpy(copy, s, siz);
+			__memcpy(copy, s, siz + 1);
 			result = copy;
 		}
 		
@@ -149,9 +142,10 @@ automaton STRING: int
 	/* returns the length of the string `s`
 	 */
 	fun strlen(@const s: *char): size_t
-	requires s != NULL;
-	ensures result >= 0;
 	{
+		requires s != null;
+        ensures result >= 0;
+
 		result = __strlen(s);
 	}
 	
@@ -159,17 +153,19 @@ automaton STRING: int
 	/* compares `s1` to `s2`, returns int greater than, equal to or less than zero
 	 * if `s1` is greater than, equal to or less than `s2`
 	fun strcmp(@const s1: *char, @const s2: *char): int
-	requires s1 != NULL;
-	requires s2 != NULL;
 	{
+		requires s1 != null;
+        requires s2 != null;
+
 		var len: size_t = __strlen(s1);
 		result = __strncmp(s1, s2, len);
 	}
 	
 	fun strncmp(@const s1: *char, @const s2: *char, n: size_t): int
-	requires s1 != NULL;
-	requires s2 != NULL;
 	{
+		requires s1 != null;
+        requires s2 != null;
+
 		result = __strncmp(s1, s2, n);
 	}
 	
@@ -187,12 +183,12 @@ automaton STRING: int
 	 * pointed to by `s`
 	 */
 	fun strchr(@const s: *char, c: int): *char
-	requires s != NULL;
-	//ensures strlen(result) <= strlen(s);
 	{
+		requires s != null;
+
 		val chr: char = c;
 		val len: size_t = __strlen(s);
-		result = action SEARCH(chr, s, len, 1);
+		result = action SEARCH_STR(chr, s, len, 1);
 	}
 	
 		
@@ -200,12 +196,12 @@ automaton STRING: int
 	 * pointed to by `s`
 	 */
 	fun strrchr(@const s: *char, c: int): *char
-	requires s != NULL;
-	//ensures strlen(result) <= strlen(s);
 	{
+		requires s != null;
+
 		val chr: char = c;
 		val len: size_t = __strlen(s);
-		result = action SEARCH(chr, s, len, 0);
+		result = action SEARCH_STR(chr, s, len, 0);
 	}
 	
 	
@@ -213,11 +209,9 @@ automaton STRING: int
 	 * by `s1` which consists entirely of characters from the string pointed to by `s2`
 	 */
 	fun strspn(@const s1: *char, @const s2: *char): size_t
-	requires s1 != NULL;
-	requires s2 != NULL;
-	//ensures result < strlen(s1);
 	{
-		
+		requires s1 != null;
+        requires s2 != null;
 	}
 	
 	
@@ -225,11 +219,9 @@ automaton STRING: int
 	 * by `s1` which consists entirely of characters NOT from the string pointed to by `s2`
 	 */
 	fun strcspn(@const s1: *char, @const s2: *char): size_t
-	requires s1 != NULL;
-	requires s2 != NULL;
-	//ensures result < strlen(s1);
 	{
-	
+        requires s1 != null;
+        requires s2 != null;
 	}
 	
 	
@@ -248,7 +240,7 @@ automaton STRING: int
 	fun strstr(@const s1: *char, @const s2: *char): *char
 	{
 		val len: size_t = __strlen(s2);
-		result = action SEARCH(s1, s2, 1);
+		result = action SEARCH_STR(s1, s2, 1);
 	}
 	
 	
@@ -263,9 +255,9 @@ automaton STRING: int
 	 */
 	fun memchr(@const s: *void, c: int, n: size_t): *void
 	{
-		@const val chr: `unsigned char` = c;
-		@const val str: *`unsigned char` = s;
-		result = action SEARCH(chr, str, n, 1)
+		val chr: `unsigned char` = c;
+		val str: `*unsigned char` = s;
+		result = action SEARCH_STR(chr, str, n, 1);
 	}
 	
 	
@@ -274,8 +266,8 @@ automaton STRING: int
 	 */
 	fun memcmp(@const s1: *void, @const s2: *void, n: size_t): int
 	{
-		@const val str1: *`unsigned char` = s1;
-		@const val str2: *`unsigned char` = s;
+		val str1: `*unsigned char` = s1;
+		val str2: `*unsigned char` = s2;
 		result = action COMPARE(str1, str2, n);
 	}
 	

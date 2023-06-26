@@ -10,7 +10,8 @@ object ExpressionPrinter {
         LINE("\\n"),
         CARRIAGE("\\r"),
         TAB("\\t"),
-        VERTICAL_TAB("\\v")
+        VERTICAL_TAB("\\v"),
+        NULL_TERM("\\0")
     }
 
     fun printExpressions(expression: Expression, priority: Int = Int.MAX_VALUE): String = buildString {

@@ -7,6 +7,15 @@ library stdlib
 
 
 // ---------------------standard c types--------------------------
+typealias `*unsigned char` = *unsigned8;
+typealias *short = *int16;
+typealias `*unsigned short` = *unsigned16;
+typealias *int = *int32;
+typealias `*unsigned int` = *unsigned32;
+typealias *long = *int64;
+typealias `*unsigned long` = *unsigned64;
+typealias `*long long` = *int64;
+typealias `*unsigned long long` = *unsigned64;
 
 typealias `unsigned char` = unsigned8;
 typealias short = int16;
@@ -42,7 +51,7 @@ annotation complex();
 // function pointers: int(*fun)(int *) - pointer to function with int argument that returns int value
 // usage example: @fun_pointer(["int *"]) var fun: *int;
 annotation fun_pointer(
-	args: array<string>
+	args: string
 );
 
 
@@ -65,4 +74,5 @@ define action ALIGNOF(
 
 //------------------------constants----------------------------------
 
+val null: any = 0;
 val nullptr: any = null;

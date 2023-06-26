@@ -4,6 +4,8 @@ import org.jetbrains.research.libsl.context.LslContextBase
 import org.jetbrains.research.libsl.nodes.*
 import org.jetbrains.research.libsl.type.TypeInferrer
 import org.jetbrains.research.libsl.nodes.Function
+import org.jetbrains.research.libsl.nodes.references.TypeReference
+import org.jetbrains.research.libsl.type.Type
 
 class FunctionGenerator(
     private val functions: List<Function> = mutableListOf(),
@@ -14,7 +16,7 @@ class FunctionGenerator(
             for (sub in subFunctions) {
                 val name = sub.name
                 val args = sub.args
-                val returnType: String? = sub.returnType?.name
+                val returnType = sub.returnType
                 val contracts = sub.contracts
                 val requireList = contracts.filter { it.kind == ContractKind.REQUIRES }
                 val ensuresList = contracts.filter { it.kind == ContractKind.ENSURES }
@@ -33,7 +35,7 @@ class FunctionGenerator(
             for (function in functions) {
                 val name = function.name
                 val args = function.args
-                val returnType: String? = function.returnType?.name
+                val returnType = function.returnType
                 val contracts = function.contracts
                 val requireList = contracts.filter { it.kind == ContractKind.REQUIRES }
                 val ensuresList = contracts.filter { it.kind == ContractKind.ENSURES }
@@ -49,23 +51,33 @@ class FunctionGenerator(
         }
     }
 
-    private fun printSignature(name: String, args: List<FunctionArgument>, returnType: String?): String = buildString {
+    private fun printSignature(
+        name: String,
+        args: List<FunctionArgument>,
+        returnType: TypeReference?
+    ): String = buildString {
         val generator = VariableGenerator(args)
-        if (returnType != null) append("$returnType ")
+        if (returnType != null) {
+            val pointer = if (returnType.isPointer) "*" else ""
+            append("${returnType.name}$pointer ")
+        }
         else append("void ")
         append(name)
         append(generator.generateString())
     }
 
     private fun printBody(
-        returnType: String?,
+        returnType: TypeReference?,
         requireList: List<Contract>,
         ensuresList: List<Contract>,
         statementList: List<Statement>,
         lslContext: LslContextBase
     ): String = buildString {
         if (requireList.isNotEmpty()) appendLine(printRequirements(requireList))
-        if (returnType != null) appendLine("$returnType result;")
+        if (returnType != null) {
+            val pointer = if (returnType.isPointer) "*" else ""
+            appendLine("${returnType.name}$pointer result;")
+        }
         if (ensuresList.isNotEmpty()) {
             for (ensure in ensuresList) {
                 val oldValue = searchForOldValue(ensure.expression)

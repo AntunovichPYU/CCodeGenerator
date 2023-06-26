@@ -3,21 +3,21 @@ libsl "1.1.0";
 library `stdlib.h`
 	version "C23"
 	language "C"
-	url "-"
+	url "-";
 
-import semantic.lsl;
-import definitions.lsl;
-import actions.lsl;
-import ctype.lsl;
+import "std/utils/semantic";
+import "std/utils/definitions";
+import "std/utils/actions";
+import "std/ctype";
 
-include <stdlib.h>
-include <ctype.h>
+include "<stdlib.h>";
+include "<ctype.h>";
 
 
 type free_block
 {
 	size: size_t;
-	next: *free_block;
+	next: free_block;
 }
 
 
@@ -30,8 +30,8 @@ automaton STDLIB: int
 
 	proc __malloc(size: size_t): *void
     {
-        var free_block_list_head: *free_block;
-        var *block: *free_block;
+        var free_block_list_head: free_block;
+        var block: free_block;
 
         action ALIGN(size);
         block = free_block_list_head.next;
@@ -41,8 +41,9 @@ automaton STDLIB: int
 	/* returns absolute value
 	 */
 	fun abs(n: int): int
-	ensures result >= 0;
 	{
+		ensures result >= 0;
+
 		if (n < 0) {
 			result = -n;
 		} else {
@@ -51,8 +52,9 @@ automaton STDLIB: int
 	}
 	
 	fun labs(n: long): long
-	ensures result >= 0;
 	{
+		ensures result >= 0;
+
 		if (n < 0) {
 			result = -n;
 		} else {
@@ -61,8 +63,9 @@ automaton STDLIB: int
 	}
 	
 	fun llabs(n: `long long`): `long long`
-	ensures result >= 0;
 	{
+		ensures result >= 0;
+
 		if (n < 0) {
 			result = -n;
 		} else {
@@ -73,9 +76,10 @@ automaton STDLIB: int
 	/* div, ldiv, lldiv compute quotient and remainder in a single operation 
 	 */
 	fun div(x: int, y: int): div_t
-	requires y != 0;
-	ensures (result.quot = x / y) & (result.rem = x % y);
 	{
+		requires y != 0;
+        ensures (result.quot == x / y) & (result.rem == x % y);
+
 		val div_result: div_t;
 		div_result.quot = x / y;
 		div_result.rem = x % y;
@@ -87,9 +91,11 @@ automaton STDLIB: int
 	}
 	
 	fun ldiv(x: long, y: long): ldiv_t
-	requires y != 0; 
-	ensures (result.quot = x / y) & (result.rem = x % y);
+
 	{
+		requires y != 0;
+        ensures (result.quot == x / y) & (result.rem == x % y);
+
 		val div_result: ldiv_t;
 		div_result.quot = x / y;
 		div_result.rem = x % y;
@@ -101,9 +107,10 @@ automaton STDLIB: int
 	}
 	
 	fun lldiv(x: `long long`, y: `long long`): lldiv_t
-	requires y != 0;
-	ensures (result.quot = x / y) & (result.rem = x % y);
 	{
+		requires y != 0;
+        ensures (result.quot == x / y) & (result.rem == x % y);
+
 		val div_result: lldiv_t;
 		div_result.quot = x / y;
 		div_result.rem = x % y;
@@ -117,77 +124,67 @@ automaton STDLIB: int
 	/* converts string pointed to by nptr to double 
 	 */
 	fun atof(@const nptr: *char): double
-	requires nptr != null;
 	{
-		
+		requires nptr != null;
+
 	}
 	
 	/* atoi, atol, atoll convert string pointed to by
 	 * nptr to int, long, long long respectively
 	 */
 	fun atoi(@const nptr: *char): int
-	requires nptr != null;
 	{
-	
+        requires nptr != null;
 	}
 	
 	fun atol(@const nptr: *char): long
-	requires nptr != null;
 	{
-	
+        requires nptr != null;
 	}
 	
 	fun atoll(@const nptr: *char): `long long`
-	requires nptr != null;
 	{
-	
+        requires nptr != null;
 	}
 	
 	/* convert string pointed by nptr to long, long long, unsigned long,
 	 * unsigned long long respectively
 	 */
-	fun strtol(@const @restrict nptr: *char, @restrict *endptr: *char, base: int): long
-	requires endptr != null;
+	fun strtol(@const @restrict nptr: *char, @restrict endptr: *`*char`, base: int): long
 	{
-		
+		requires endptr != null;
 	}
 	
-	fun strtoll(@const @restrict nptr: *char, @restrict *endptr: *char, base: int): `long long`
-	requires endptr != null;
+	fun strtoll(@const @restrict nptr: *char, @restrict endptr: *`*char`, base: int): `long long`
 	{
-	
+        requires endptr != null;
 	}
 	
-	fun strtoul(@const @restrict nptr: *char, @restrict *endptr: *char, base: int): `unsigned long`
-	requires endptr != null;
+	fun strtoul(@const @restrict nptr: *char, @restrict endptr: *`*char`, base: int): `unsigned long`
 	{
-	
+        requires endptr != null;
 	}
 	
-	fun strtoull(@const @restrict nptr: *char, @restrict *endptr: *char, base: int): `unsigned long long`
-	requires endptr != null;
+	fun strtoull(@const @restrict nptr: *char, @restrict endptr: *`*char`, base: int): `unsigned long long`
 	{
-	
+        requires endptr != null;
 	}
 	
 	/* convert string pointed by nptr to float, double, long double respectively
 	 */
-	fun strtof(nptr: *char, *endptr: *char): float
-	requires endptr != null;
+	fun strtof(nptr: *char, endptr: *`*char`): float
 	{
-		
+		requires endptr != null;
 	}
 	
-	fun strtod(nptr: *char, *endptr: *char): double
-	requires endptr != null;
+	fun strtod(nptr: *char, endptr: *`*char`): double
 	{
-		
+		requires endptr != null;
 	}
 	
-	fun strtold(nptr: *char, *endptr: *char): `long double`
-	requires endptr != null;
+	fun strtold(nptr: *char, endptr: *`*char`): `long double`
 	{
-	
+        requires endptr != null;
 	}
 	
 	
@@ -195,18 +192,21 @@ automaton STDLIB: int
 	
 	/* computes pseudorandom value in range 0 to RAND_MAX
 	 */
-	fun rand(void): int
-	ensures result > 0;
+	fun rand(): int
 	{
+		ensures result > 0;
+
 		next = next * 1103515245 + 12345;
-		result = action CONVERT("unsigned int", ((next / 65536) % (RAND_MAX + 1)));
+		val r: `unsigned int` = (next / 65536) % (RAND_MAX + 1);
+		result = r;
 	}
 	
 	/* uses argument as a seed to a new random number returned by rand()
 	 */
 	fun srand(seed: `unsigned int`)
-	ensures next = seed;
 	{
+		ensures next == seed;
+
 		next = seed;
 	}
 	
@@ -214,28 +214,25 @@ automaton STDLIB: int
 	 * returns 0 if a nullpointer, number of bytes or -1 if invalid value 
 	 */
 	fun mblen(@const s: *char, n: size_t): int
-	ensures result >= -1;
 	{
-	
+        ensures result >= -1;
 	}
 	
 	/* returns number of bytes needed to complete the next multibyte character;
 	 * inspects at most `n` characters;
 	 * stores value in the object pointed by `pwc` 
 	 */
-	fun mbtowc(@restrict pwc: *wchar_t, @const @restrict *s: char, n: size_t): int
-	ensures result >= -1;
+	fun mbtowc(@restrict pwc: *wchar_t, @const @restrict s: *char, n: size_t): int
 	{
-	
+        ensures result >= -1;
 	}
 	
 	/* returns number of bytes needed to complete the next multibyte wide character;
 	 * stores in the array pointed to by `s`
 	 */
 	fun wctomb(s: *char, wc: wchar_t): int
-	ensures result >= -1;
 	{
-	
+        ensures result >= -1;
 	}
 	
 	/* converts a sequence of multibyte characters that begins in the initial shift
@@ -243,9 +240,8 @@ automaton STDLIB: int
 	 * and stores not more than `n` wide characters into the array pointed to by `pwcs`
 	 */
 	fun mbstowcs(@restrict pwcs: *wchar_t, @const @restrict s: *char, n: size_t): size_t
-	ensures result >= -1;
 	{
-	
+        ensures result >= -1;
 	}
 	
 	/* converts a sequence of wide characters from the array pointed to by pwcs
@@ -254,10 +250,9 @@ automaton STDLIB: int
 	 * stopping if a multibyte character would exceed the limit of n total bytes or if 
 	 * a null character is stored
 	 */
-	fun wcstombs(*s: char, *pwcs: wchar_t, n: size_t): size_t
-	ensures result >= -1;
+	fun wcstombs(s: *char, pwcs: *wchar_t, n: size_t): size_t
 	{
-	
+	    ensures result >= -1;
 	}
 	
 	/* sorts an array of `nmemb` elements, the initial element of which is pointed by `base`;
@@ -269,7 +264,7 @@ automaton STDLIB: int
 		base: *void, 
 		nmemb: size_t, 
 		size: size_t, 
-		@fun_pointer("const void *", "const void *") (compar): *int
+		@fun_pointer("const void *, const void *") compar: *int
 	)
 	{
 		action SORT(base, nmemb, size, compar);
@@ -285,7 +280,7 @@ automaton STDLIB: int
 		base: *void, 
 		nmemb: size_t, 
 		size: size_t, 
-		@fun_pointer("const void *", "const void *") (compar): *int
+		@fun_pointer("const void *, const void *") compar: *int
 	): *void
 	{
 		result = action SEARCH(key, base, nmemb, size, compar);
@@ -293,7 +288,7 @@ automaton STDLIB: int
 	
 	fun malloc(size: size_t): *void
 	{
-		result = __malloc(size: size_t);
+		result = __malloc(size);
 	}
 	
 	fun calloc(nmemb: size_t, size: size_t): *void
@@ -326,9 +321,8 @@ automaton STDLIB: int
 	
 	
 	fun exit(status: int)
-	requires (status = EXIT_SUCCESS) | (status = EXIT_FAILURE);
 	{
-	
+	    requires (status == EXIT_SUCCESS) || (status == EXIT_FAILURE);
 	}
 	
 	fun quick_exit(status: int)
@@ -341,23 +335,22 @@ automaton STDLIB: int
 	
 	}
 	
-	fun atexit(*func: void): int
+	fun atexit(@fun_pointer("void") func: *void): int
 	{
 	
 	}
 	
-	fun at_quick_exit(*func: void): int
+	fun at_quick_exit(@fun_pointer("void") func: *void): int
 	{
 	
 	}
 	
-	fun system(*string: char): int
-	ensures result >= 0;
+	fun system(string: *char): int
 	{
-	
+	    ensures result >= 0;
 	}
 	
-	fun *getenv(*name: char): char
+	fun getenv(name: *char): *char
 	{
 	
 	}

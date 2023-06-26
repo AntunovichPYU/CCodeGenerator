@@ -37,4 +37,8 @@ class LibraryGenerator(
     fun generateActions(): String {
         return ActionGenerator().generateString()
     }
+
+    fun generateActionsHeader(): String {
+        return ActionGenerator().generateHeader()
+    }
 }

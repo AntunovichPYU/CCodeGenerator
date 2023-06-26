@@ -15,18 +15,40 @@ include "<ctype.h>";
 automaton CTYPE: int 
 {
 	//subs
-	proc __isalpha(c: int): int
-	{
-	    val is_upper: int = __isuper(c);
-	    val is_lower: int = __islower(c);
-	    result = is_upper || is_lower;
-	}
+	proc __islower(c: int): int
+    {
+        val first_letter: char = "a";
+        val uc: `unsigned char` = c - first_letter;
+
+        result = uc < 26;
+    }
+
+    proc __isupper(c: int): int
+    {
+        val first_letter: char = "A";
+        val uc: `unsigned char` = c - first_letter;
+
+        result = uc < 26;
+    }
+
+    proc __isgraph(c: int): int
+    {
+        val uc: `unsigned char` = c - 33;
+        result = uc < 94;
+    }
 
 	proc __isdigit(c: int): int
 	{
         val first_digit: char = "0";
-        val uc: `unsigned char` = c;
-        result = uc - first_digit < 10;
+        val uc: `unsigned char` = c - first_digit;
+        result = uc < 10;
+	}
+
+	proc __isalpha(c: int): int
+	{
+	    val is_upper: int = __isupper(c);
+	    val is_lower: int = __islower(c);
+	    result = is_upper || is_lower;
 	}
 
 	proc __isalnum(c: int): int
@@ -35,26 +57,6 @@ automaton CTYPE: int
 	    val is_digit: int = __isdigit(c);
 	    result = is_alpha || is_digit;
 	}
-
-    proc __islower(c: int): int
-    {
-        val uc: `unsigned char` = c;
-        val first_letter: char = "a";
-        result = uc - first_letter < 26;
-    }
-
-    proc __isuper(c: int): int
-    {
-        val uc: `unsigned char` = c;
-        val first_letter: char = "A";
-        result = uc - first_letter < 26;
-    }
-
-    proc __isgraph(c: int): int
-    {
-        val uc: `unsigned char` = c;
-        result = uc - 33 < 94;
-    }
 
 
 
@@ -115,7 +117,6 @@ automaton CTYPE: int
      */
 	fun isprint(c: int): int
 	{
-	    val uc: `unsigned char` = c;
 	    val is_graph: int = __isgraph(c);
 	    val space: char = " ";
 	    result = is_graph || c == space;
@@ -136,10 +137,10 @@ automaton CTYPE: int
 	 */
 	fun isspace(c: int): int
 	{
-	    val uc: `unsigned char` = c;
 	    val space: char = " ";
 	    val tab: char = "\t";
-	    result = c == space || uc - tab < 5;
+	    val uc: `unsigned char` = c - tab;
+	    result = c == space || uc < 5;
 	}
 
 
@@ -155,10 +156,11 @@ automaton CTYPE: int
 	 */
 	fun isxdigit(c: int): int
 	{
-	    val uc: `unsigned char` = c;
 	    val is_digit: int = __isdigit(c);
 	    val a_letter: char = "a";
-	    result = is_digit || (uc | 32) - a_letter < 6; //digits and first 6 letters in any case
+
+	    val uc: `unsigned char` = (c | 32) - a_letter;
+	    result = is_digit || uc < 6; //digits and first 6 letters in any case
 	}
 
 

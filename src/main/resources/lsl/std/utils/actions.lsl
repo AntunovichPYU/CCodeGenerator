@@ -17,6 +17,11 @@ define action FIND_FIT(
         size: size_t
     ): void;
 
+define action FREE_BLOCK(
+        ptr: *void,
+        block: *free_block
+    ): void;
+
 define action SKIP_SPACES(
 		strptr: *char
 	): void;
@@ -25,7 +30,7 @@ define action SORT(
 		base: *void,
 		nmemb: size_t,
 		size: size_t,
-		@fun_pointer(["const void *", "const void *"]) (compar): *int
+		@fun_pointer("const void *, const void *") compar: *int
 	): void;
 
 define action SEARCH(
@@ -33,7 +38,7 @@ define action SEARCH(
 		base: *void,
 		nmemb: size_t,
 		size: size_t,
-		@fun_pointer(["const void *", "const void *"]) (compar): *int
+		@fun_pointer("const void *, const void *") compar: *int
 	): *void;
 
 
@@ -48,7 +53,7 @@ define action COPY_STRING(
 	): *char;
 
 //length of string
-define action STRLEN(
+define action STR_LEN(
 		str: *char
 	): size_t;
 
@@ -68,7 +73,7 @@ define action COMPARE(
 
 //returns first, if `forward` is 1, or last, if `forward` is 0, occurrence
 //of `s1` in `size` first or last characters `s2`
-define action SEARCH(
+define action SEARCH_STR(
 		s1: *char,
 		s2: *char,
 		size: size_t,

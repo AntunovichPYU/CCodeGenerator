@@ -11,6 +11,8 @@ class Extractor {
         val functions = automaton.functions
         val procedures = automaton.procDeclList
         val includes = lib.includes
+        includes.add("<assert.h>")
+        includes.add("\"actions.h\"")
 
         return LibraryGenerator(
             includes,
