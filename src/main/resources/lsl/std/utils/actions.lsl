@@ -8,9 +8,6 @@ library stdlib
 
 //----------------------------stdlib.h-----------------------------
 
-define action ALIGN(
-        size: size_t
-    ): void;
 
 define action FIND_FIT(
         block: *free_block,
@@ -45,7 +42,8 @@ define action SEARCH(
 
 //---------------------------------string.h-----------------------------
 
-//copy `size` characters from `src` to `dst` and returnes `dst`
+//copy `size` characters from
+//`src` to `dst` and returnes `dst`
 define action COPY_STRING(
 		dst: *char,
 		src: *char,

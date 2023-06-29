@@ -28,15 +28,19 @@ automaton STDLIB: int
     val EXIT_SUCCESS: int = 1;
     val RAND_MAX: int = 32767;
 
+    val alignment: int = 8;
+    var free_block_list_head: free_block;
 	proc __malloc(size: size_t): *void
     {
-        var free_block_list_head: free_block;
         var block: free_block;
 
-        action ALIGN(size);
+        var blk_size: size_t = ((size) + (alignment - 1)) & ~(alignment - 1);
         block = free_block_list_head.next;
-        action FIND_FIT(block, size);
+        result = action FIND_FIT(block, blk_size);
+
     }
+
+
 
 	/* returns absolute value
 	 */
@@ -197,13 +201,13 @@ automaton STDLIB: int
 		ensures result > 0;
 
 		next = next * 1103515245 + 12345;
-		val r: `unsigned int` = (next / 65536) % (RAND_MAX + 1);
+		val r: unsigned = (next / 65536) % (RAND_MAX + 1);
 		result = r;
 	}
 	
 	/* uses argument as a seed to a new random number returned by rand()
 	 */
-	fun srand(seed: `unsigned int`)
+	fun srand(seed: unsigned)
 	{
 		ensures next == seed;
 
