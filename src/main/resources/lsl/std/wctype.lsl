@@ -1,6 +1,6 @@
 libsl "1.1.0";
 
-library wctype.h
+library wctype
 	version ""
 	language "C"
 	url "";

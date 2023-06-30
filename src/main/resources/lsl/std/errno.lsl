@@ -1,6 +1,6 @@
 libsl "1.1.0";
 
-library errno.h
+library errno
 	version ""
 	language "C"
 	url "";

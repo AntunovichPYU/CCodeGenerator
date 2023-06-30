@@ -1,6 +1,6 @@
 libsl "1.0.0";
 
-library time.h
+library time
 	version ""
 	language "C"
 	url "";
@@ -29,7 +29,7 @@ automaton TIME: int
 
 
 	//not implemented
-
+/*
 	fun time(arg: *time_t): time_t;
 	
 	fun clock(): clock_t;
@@ -43,4 +43,5 @@ automaton TIME: int
 	@struct fun localtime(@const timer: *time_t): tm;
 	
 	fun mktime(@struct arg: tm): time_t;
+*/
 }

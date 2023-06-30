@@ -1,6 +1,6 @@
 libsl "1.0.0";
 
-library signal.h
+library signal
 	version ""
 	language "C"
 	url "";
@@ -11,12 +11,13 @@ import "std/utils/definitions";
 include "<signal.h>";
 
 typealias sig_fn = void;
+typealias `*sig_fn` = sig_fn;
 
 automaton SIGNAL: int 
 {
 	var sig_table: array<sig_fn>;
 
-	fun signal(sig: int; handler: sig_fn): *sig_fn
+	fun signal(sig: int, handler: sig_fn): `*sig_fn`
 	{
         var s: sig_fn;
         if (sig <= 0 || sig >= NSIG || handler == SIG_ERR) {
@@ -36,9 +37,9 @@ automaton SIGNAL: int
             result = -1;
         } else {
             s = sig_table[sig_num];
-            if (s != SIG_IGN && != SIG_DFL) {
+            if (s != SIG_IGN && s != SIG_DFL) {
                 sig_table[sig_num] = SIG_DFL;
-                s(sig);
+                s(sig_num);
             } else {
                 if (s == SIG_DFL) {
                     action SYS_RAISE_SIGNAL("error");
