@@ -3,7 +3,12 @@ libsl "1.0.0";
 library time.h
 	version ""
 	language "C"
-	url ""
+	url "";
+
+import "std/utils/semantic";
+import "std/utils/definitions";
+
+include "<time.h>";
 
 typealias *tm = long;
 

@@ -5,6 +5,11 @@ library wctype.h
 	language "C"
 	url "";
 
+import "std/utils/semantic";
+import "std/utils/definitions";
+
+include "<wctype.h>";
+
 
 automaton WCTYPE: int 
 {

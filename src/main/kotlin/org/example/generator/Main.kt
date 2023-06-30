@@ -5,7 +5,7 @@ import java.io.File
 
 fun main() {
     val libsl = LibSL("./src/main/resources/lsl")
-    val library = libsl.loadFromFileName("std/string.lsl")
+    val library = libsl.loadFromFileName("std/stdlib.lsl")
     val libraryExtractor = Extractor()
     val cLibrary = libraryExtractor.extract(library)
     val libraryString = cLibrary.generateString()

@@ -3,8 +3,12 @@ libsl "1.0.0";
 library signal.h
 	version ""
 	language "C"
-	url ""
+	url "";
 
+import "std/utils/semantic";
+import "std/utils/definitions";
+
+include "<signal.h>";
 
 typealias sig_fn = void;
 

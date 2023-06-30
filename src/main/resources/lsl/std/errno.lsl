@@ -5,7 +5,7 @@ library errno.h
 	language "C"
 	url "";
 
-include <errno.h>;
+include "<errno.h>";
 
 automaton ERRNO: int
 {
